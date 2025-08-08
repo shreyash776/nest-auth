@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller,Get,Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignupDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
@@ -6,13 +6,18 @@ import { LoginDto } from './dto/login.dto';
 @Controller('auth') // Base route: /auth
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
-
+  
+  //get demo route
+   @Get('demo')
+demo() {
+    return { message: 'Demo route works!' };
+}
   // POST /auth/signup
   @Post('signup')
   signup(@Body() signupDto: SignupDto) {
     return this.authService.signup(signupDto);
   }
-
+ 
   // POST /auth/login
   @Post('login')
   login(@Body() loginDto: LoginDto) {

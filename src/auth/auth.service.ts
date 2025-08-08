@@ -1,46 +1,47 @@
 import { Injectable } from '@nestjs/common';
 import { SignupDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
+import { User } from './user.interface'; // import interface
 
 @Injectable()
 export class AuthService {
-  // Temporary in-memory store for users
-  private users = [];
+  private users: User[] = []; // ✅ now TS knows each user has username, email, etc.
 
-  // Handle signup
   signup(signupDto: SignupDto) {
     const { username, email, password } = signupDto;
 
-    // Check if email already exists
+    // check if user exists
     const userExists = this.users.find((u) => u.email === email);
     if (userExists) {
-      return { message: 'Email already registered' };
+      return { message: 'User already exists' };
     }
 
-    // Create random token
+    // create token
     const token = Math.random().toString(36).substring(2);
 
-    // Store user in array
+    // push new user
     this.users.push({ username, email, password, token });
 
-    return { message: 'User signed up successfully', token };
+    return { message: 'Signup successful', token };
   }
 
-  // Handle login
   login(loginDto: LoginDto) {
     const { email, password } = loginDto;
 
-    // Check if email exists
     const user = this.users.find((u) => u.email === email);
     if (!user) {
-      return { message: 'Email is incorrect' };
+      return { message: 'User not found' };
     }
 
-    // Check password
     if (user.password !== password) {
-      return { message: 'Password is incorrect' };
+      return { message: 'Invalid password' };
     }
 
     return { message: 'Login successful', token: user.token };
+  }
+
+  getAllUsers() {
+    // return without password for security
+    return this.users.map(({ password, ...rest }) => rest);
   }
 }
